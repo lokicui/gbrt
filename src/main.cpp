@@ -44,8 +44,8 @@ int main(int argc, char ** argv)
     std::string config_file = "./gbrt.conf";
     std::string act_type = "";
     std::string model_file = "./gbrt.model";
-    int dimention = 415;
-    
+    int dimention = 1024;
+
     //----parse command line
     int opt_c;
     while ( (opt_c = getopt( argc, argv, "d:f:i:c:m:tp")) != EOF )
@@ -75,11 +75,11 @@ int main(int argc, char ** argv)
         default:
             break;
         }
-        
+
     }
 
     //check options
-    if ( act_type.length() == 0 
+    if ( act_type.length() == 0
         || input_file.length() == 0 )
     {
         std::cerr << "miss parameter!!" << endl;
@@ -122,7 +122,7 @@ int main(int argc, char ** argv)
 
     if (!gbdt.LoadConfig(config_file))
         return 1;
-    
+
     if (act_type == "t")
     {
         gbdt.Init();
@@ -134,7 +134,7 @@ int main(int argc, char ** argv)
         T_VECTOR predictions;
         gbdt.LoadWeights(model_file);
         gbdt.PredictAllOutputs(data, predictions);
-        
+
         //----output prediction----
         std::ifstream fs;
         fs.open(input_file.c_str(), std::ios_base::in);
@@ -142,7 +142,7 @@ int main(int argc, char ** argv)
         std::string prediction_file = input_file + ".prediction";
         std::fstream fs_out;
         fs_out.open(prediction_file.c_str(), std::ios_base::out);
-        
+
         std::string strLine;
         unsigned int line_num = 0;
         while (getline(fs, strLine))
@@ -158,10 +158,10 @@ int main(int argc, char ** argv)
         }
 
         fs.close();
-        
+
     }
 
-    
+
     return 0;
 }
 

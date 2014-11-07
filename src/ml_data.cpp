@@ -93,7 +93,7 @@ bool DataReader::ReadDataFromCVS(const std::string& input_file, Data& data)
             {
                 data.m_data.resize( line_num + 1 );
                 T_VECTOR & fv = data.m_data[line_num];
-                
+
                 T_DTYPE f_value = 0;
                 for ( size_t i = 0; i < vecResult.size() - 1; ++i )
                 {
@@ -110,7 +110,7 @@ bool DataReader::ReadDataFromCVS(const std::string& input_file, Data& data)
 
                     fv.push_back( f_value );
                 }
-                
+
                 unsigned int target_index = vecResult.size() - 1;
                 char ** endptr = NULL;
                 f_value = strtof( vecResult[target_index].c_str() , endptr);
@@ -123,7 +123,7 @@ bool DataReader::ReadDataFromCVS(const std::string& input_file, Data& data)
                       std::cerr << " target format wrong: " << vecResult[target_index] << std::endl;
                 }
                 data.m_target.push_back(f_value);
-                
+
                 if (line_num == 0)
                 {
                     data.m_dimension = data.m_data[0].size();
@@ -147,7 +147,7 @@ bool DataReader::ReadDataFromCVS(const std::string& input_file, Data& data)
 
     std::cout << "dimension: " << data.m_dimension << std::endl;
     std::cout << "data num: " << data.m_num << std::endl;
-    
+
     return true;
 }
 
@@ -170,16 +170,25 @@ bool DataReader::ReadDataFromL2R(const std::string& input_file, Data& data, unsi
     {
         if (!strLine.empty())
         {
+            size_t pos = strLine.find("#");
+            if (pos != strLine.npos)
+            {
+                while(pos > 0 && strLine.at(pos) == ' ')
+                    pos ++;
+                strLine = strLine.substr(0, pos);
+            }
             std::vector<std::string> vecResult;
-            Split(strLine, '\t', vecResult,true);
+            Split(strLine, ' ', vecResult,true);
+            if (vecResult.size() < 3)
+                Split(strLine, '\t', vecResult,true);
             if (vecResult.size() >= 3)
             {
                 data.m_data.resize( line_num + 1 );
                 T_VECTOR & fv = data.m_data[line_num];
                 fv.resize(dimentions);
-                
+
                 //read target
-                unsigned int target_index = 0;
+                const unsigned int target_index = 0;
                 char ** endptr = NULL;
                 T_DTYPE target_value = strtof( vecResult[target_index].c_str() , endptr);
                 if(errno == ERANGE)
@@ -194,7 +203,7 @@ bool DataReader::ReadDataFromL2R(const std::string& input_file, Data& data, unsi
                 }
                 data.m_target.push_back(target_value);
 
-                
+
                 for ( size_t i = 2; i < vecResult.size(); ++i )
                 {
                     int f_index = -1;
@@ -209,7 +218,7 @@ bool DataReader::ReadDataFromL2R(const std::string& input_file, Data& data, unsi
                     fv[f_index] = f_value;
                     data.m_valid_id.insert(f_index);
                 }
-                
+
                 line_num++;
             }
             else
@@ -230,7 +239,7 @@ bool DataReader::ReadDataFromL2R(const std::string& input_file, Data& data, unsi
     std::cout << "dimension: " << data.m_dimension << std::endl;
     std::cout << "data num: " << data.m_num << std::endl;
     std::cout << "valid feature size: " << data.m_valid_id.size() << std::endl;
-    
+
     return true;
 }
 
