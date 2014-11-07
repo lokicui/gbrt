@@ -171,10 +171,12 @@ bool DataReader::ReadDataFromL2R(const std::string& input_file, Data& data, unsi
         if (!strLine.empty())
         {
             size_t pos = strLine.find("#");
-            if (pos != strLine.npos)
+            if (pos != strLine.npos && pos > 0)
             {
+                pos --;
                 while(pos > 0 && strLine.at(pos) == ' ')
-                    pos ++;
+                    pos --;
+                pos ++;
                 strLine = strLine.substr(0, pos);
             }
             std::vector<std::string> vecResult;
